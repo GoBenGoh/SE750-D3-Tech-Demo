@@ -26,6 +26,7 @@ function BarGraph() {
   const yScale = d3.scaleLinear().domain([0, 100]).range([h, 0]); // range is inverted as it goes from top to bottom
   xScale.domain(halfAchievements.map(function(d) { return d.name; }));
 
+  //Labels and Title
   svg.append("g")
   .attr("transform", "translate(0," + h + ")")
   .call(d3.axisBottom(xScale))
@@ -39,6 +40,15 @@ function BarGraph() {
   .call(d3.axisLeft(yScale).tickFormat(function(d){
     return d;
   }).ticks(10));
+
+  svg.append("text")
+   .attr("x", 550)
+   .attr("y", 50)
+   .attr("font-size", "32px")
+   .attr("font-family", "trebuchet ms, sans-serif")
+   .attr("font-weight", "bold")
+   .attr("fill", "white")
+   .text("Percentage Completion of CSGO Achievements")
 
     // data for svg
   svg.selectAll('.bar').data(halfAchievements)
