@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import * as d3 from 'd3'
 
 function BarGraph() {
-  const [data] = useState([0]);
   const svgRef = useRef();
   const [achievements, setData] = useState(["name", 100]);
 
@@ -11,49 +10,43 @@ function BarGraph() {
   .then(response => setData(response.data.achievementpercentages.achievements))
   }, []);
 
-  const achievementList = Array(achievements.length);
-  const percentList = Array(achievements.length);
-  for(let i = 0; i < achievements.length; i++){
-    achievementList[i] = achievements[i].name;
-    percentList[i] = achievements[i].percent;
-  }
-
   useEffect(() => {
-    const w = 1000;
+    const w = 1920;
     const h = 500;
     const svg = d3.select(svgRef.current)
     .attr('width', w)
     .attr('height', h)
-    .style('background', '#d3d3d3')
+    .style('background', '#5A5A5A')
     .style('margin-top', 50)
     .style('overflow', 'visible');
     
     // scaling
-    const xScale = d3.scaleLinear().domain([0, percentList.length-1]).range([0, w])
-    const yScale = d3.scaleLinear().domain([0, 100]).range([h, 0]) // range is inverted as it goes from top to bottom
-    const generateScaledLine = d3.line()
-    .x((d, i) => xScale(i))
-    .y(yScale)
-    .curve(d3.curveCardinal)
+    const xScale = d3.scaleBand().range([0, w]).padding(0);
+    const yScale = d3.scaleLinear().domain([0, 100]).range([h, 0]); // range is inverted as it goes from top to bottom
 
-    // axes
-    const xAxis = d3.axisBottom(xScale)
-    .ticks(percentList.length)
-    .tickFormat(i => i+1);
-    const yAxis = d3.axisLeft(yScale)
-    .ticks(5);
-    svg.append('g')
-    .call(xAxis)
-    .attr('transform', `translate(0, ${h})`);
-    svg.append('g')
-    .call(yAxis);
+    xScale.domain(achievements.map(function(d) { return d.name; }));
+    yScale.domain([0, d3.max(achievements, function(d) { return d.percent; })]);
+
+    svg.append("g")
+         .attr("transform", "translate(0," + h + ")")
+         .call(d3.axisBottom(xScale));
+
+    svg.append("g")
+    .call(d3.axisLeft(yScale).tickFormat(function(d){
+        return d;
+    }).ticks(10));
 
     // data for svg
-    svg.selectAll('.line').data([percentList]).join('path')
-    .attr('d', d => generateScaledLine(d))
-    .attr('fill', 'none')
-    .attr('stroke', 'black')
-  }, [percentList]);
+    svg.selectAll('.bar').data(achievements)
+    .enter()
+    .append("rect")    
+    .attr("class", "bar")
+    .attr("x", function(d) { return xScale(d.name); })
+    .attr("y", function(d) { return yScale(d.percent); })
+    .attr("width", xScale.bandwidth())
+    .attr("height", function(d) { return h - yScale(d.percent); });
+
+  }, [achievements]);
 
   return (
     <div className='Graph'>
