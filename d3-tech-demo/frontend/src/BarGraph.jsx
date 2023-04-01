@@ -50,15 +50,23 @@ function BarGraph() {
    .attr("fill", "white")
    .text("Percentage Completion of CSGO Achievements")
 
-    // data for svg
+  // data for svg
   svg.selectAll('.bar').data(halfAchievements)
   .enter()
   .append("rect")    
   .attr("class", "bar")
   .attr("x", function(d) { return xScale(d.name); })
-  .attr("y", function(d) { return yScale(d.percent); })
+  .attr("y", function(d) { return yScale(0); }) // start from 0 for animation
   .attr("width", xScale.bandwidth())
-  .attr("height", function(d) { return h - yScale(d.percent); });
+  .attr("height", function(d) { return h - yScale(0); }) // start from 0 for animation
+
+  // animation
+  svg.selectAll("rect")
+  .transition()
+  .duration(800)
+  .attr("y", function(d) { return yScale(d.percent); })
+  .attr("height", function(d) { return h-yScale(d.percent); })
+  .delay(function(d,i){return(i*25)})
 
   return (
     <div className='Graph'>
