@@ -2,19 +2,12 @@ import { useEffect, useState, useRef } from 'react';
 import * as d3 from 'd3'
 
 function LineGraph() {
-  const [data] = useState([1,2,3,4]);
-  const [achievements, setData] = useState();
+  const [data] = useState([21,52,83,34,53,68]);
   const svgRef = useRef();
-  useEffect(() => 
-    {axios.get("http://localhost:3000/api/csgo")
-    .then(response => setData(response.data.achievementpercentages.achievements))
-  console.log(achievements)},[])
-  
-  console.log(achievements)
 
   useEffect(() => {
-    const w = 400;
-    const h = 100;
+    const w = 1800;
+    const h = 500;
     const svg = d3.select(svgRef.current)
     .attr('width', w)
     .attr('height', h)
@@ -24,7 +17,7 @@ function LineGraph() {
     
     // scaling
     const xScale = d3.scaleLinear().domain([0, data.length-1]).range([0, w])
-    const yScale = d3.scaleLinear().domain([0, h]).range([h, 0]) // range is inverted as it goes from top to bottom
+    const yScale = d3.scaleLinear().domain([0, 100]).range([h, 0]) // range is inverted as it goes from top to bottom
     const generateScaledLine = d3.line()
     .x((d, i) => xScale(i))
     .y(yScale)
@@ -41,6 +34,14 @@ function LineGraph() {
     .attr('transform', `translate(0, ${h})`);
     svg.append('g')
     .call(yAxis);
+    svg.append("text")
+    .attr("x", 750)
+    .attr("y", 40)
+    .attr("font-size", "32px")
+    .attr("font-family", "trebuchet ms, sans-serif")
+    .attr("font-weight", "bold")
+    .attr("fill", "black")
+    .text("Line Graph of Data")
 
     // data for svg
     svg.selectAll('.line').data([data]).join('path')

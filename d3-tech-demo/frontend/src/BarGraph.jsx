@@ -6,7 +6,7 @@ function BarGraph() {
   const [achievements, setData] = useState(["placeholder", 100]);
 
   useEffect(() => {
-  axios.get("http://localhost:3000/api/csgo")
+  axios.get("http://localhost:3000/api/csgo-achievements")
   .then(response => setData(response.data.achievementpercentages.achievements))
   }, []);
 
