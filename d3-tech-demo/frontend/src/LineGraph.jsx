@@ -12,7 +12,6 @@ function LineGraph() {
     .attr('width', w)
     .attr('height', h)
     .style('background', '#d3d3d3')
-    .style('margin-top', 50)
     .style('overflow', 'visible');
     
     // scaling
@@ -35,7 +34,7 @@ function LineGraph() {
     svg.append('g')
     .call(yAxis);
     svg.append("text")
-    .attr("x", 750)
+    .attr("x", 720)
     .attr("y", 40)
     .attr("font-size", "32px")
     .attr("font-family", "trebuchet ms, sans-serif")
