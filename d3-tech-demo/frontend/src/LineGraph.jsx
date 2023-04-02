@@ -42,11 +42,25 @@ function LineGraph() {
     .attr("fill", "black")
     .text("Line Graph of Data")
 
-    // data for svg
-    svg.selectAll('.line').data([data]).join('path')
-    .attr('d', d => generateScaledLine(d))
-    .attr('fill', 'none')
-    .attr('stroke', 'black')
+    // svg data
+    const chartsvg = svg.selectAll('.line').data([data]).enter();
+    const path = chartsvg.append('path')
+    .attr('d', generateScaledLine)
+    .attr('stroke-width', '2')
+    .style('fill', 'none')
+    .attr('stroke', '#ff6f3c')
+
+    // animate
+    const length = path.node().getTotalLength();
+    path
+    .attr("stroke-dasharray", length) // dash is as long as the line itself
+    .attr("stroke-dashoffset", length) // go from complete offset
+    .transition()
+    .ease(d3.easeLinear)
+    .attr("stroke-dashoffset", 0) // to 0 offset (the full line)
+    .delay(200)
+    .duration(3000)
+    
   }, [data]);
 
   return (
